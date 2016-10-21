@@ -16,9 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 public class ParserServlet extends HttpServlet {
 
     /**
-     * This function handles a POST request
-     * @param req  : Client request
-     * @param resp : Server response
+     * This function handles a POST request.
+     * 
+     * @param req  : Client request.
+     * @param resp : Server response.
+     * 
      * @throws ServletException
      * @throws IOException
      */
@@ -26,15 +28,15 @@ public class ParserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         
-        //set internal encoding
+        /* set internal encoding */
         System.setProperty("file.encoding","UTF-8");
 
-        //UTF-8 encode the POST request
+        /* UTF-8 encode the POST request */
         final String input_string;
         input_string = new String(req.getParameter("input").
                 getBytes("iso-8859-1"), "UTF-8");
 
-        //adjustments IOT display correctly
+        /* adjustments IOT display correctly */
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html");
@@ -48,59 +50,63 @@ public class ParserServlet extends HttpServlet {
 
     /**
      * Parse the given string.
-     * @param input : UTF-8 encoded string
-     * @param p     : PrintWriter obj for properly encoded output
+     * 
+     * @param input : UTF-8 encoded string.
+     * @param p     : PrintWriter obj for properly encoded output.
+     * 
      * @throws IOException
      */
     protected void parse_input(final String input, PrintWriter p) 
             throws IOException {
         
-        // regex matches alphanumeric unicode characters
+        /* regex matches alphanumeric unicode characters */
         boolean re_match = input.matches("^[\\p{L}0-9]*$");
-        int code_points  = input.codePointCount(0, input.length());
-        byte[] byte_arr  = input.getBytes("UTF-8");
+        int code_points = input.codePointCount(0, input.length());
+        byte[] byte_arr = input.getBytes("UTF-8");
         StringBuilder sb = new StringBuilder();
 
-        // display string in hex notation
-        for (byte b : byte_arr) {
+        /* display string in hex notation */
+        for (byte b : byte_arr)
             sb.append(Integer.toHexString(b & 0xFF).toUpperCase()).append(" ");
-        }
+        
 
         p.println("<p><b>Input: </b>" + input);
         p.println("<p><b>String length in bytes: </b>" + byte_arr.length);
-        p.println("<p><b>String length in characters (UTF-8 code points)</b>: " + code_points);
+        p.println("<p><b>String length in characters (UTF-8 code points)</b>: " 
+                  + code_points);
         p.print("<p><b>String (UTF-8 hex encoded): </b>" + sb.toString());
 
-        if (code_points == 0 || !re_match) {
+        if (code_points == 0 || !re_match)
             p.println("<p><b>Input is not alphanumeric.</b>");
-        } else {
+        else
             p.println("<p><b>Input is alphanumeric.</b>");
-        }
     }
 
     /**
-     * Display an appropriate welcome greeting
-     * @param lang : The ACCEPT_LANGUAGE parameter
-     * @param p    : PrintWriter obj for properly encoded output
+     * Display an appropriate welcome greeting.
+     * 
+     * @param lang : The ACCEPT_LANGUAGE parameter.
+     * @param p    : PrintWriter obj for properly encoded output.
+     * 
      * @throws IOException
      */
     protected void make_welcome(String lang, PrintWriter p) throws IOException {
         
-        if (lang_pref(lang, "fi")) {
+        if (lang_pref(lang, "fi"))
             p.println("<center><h1> Tervetuloa! </h1></center>");
-        } else if (lang_pref(lang, "ko")) {
+        else if (lang_pref(lang, "ko"))
             p.println("<center><h1> 환영! </h1></center>");
-        } else if (lang_pref(lang, "fr")) {
+        else if (lang_pref(lang, "fr"))
             p.println("<center><h1> Bienvenue! </h1></center>");
-        } else if (lang_pref(lang, "de")) {
+        else if (lang_pref(lang, "de"))
             p.println("<center><h1> Willkommen! </h1></center>");
-        } else {
+        else
             p.println("<center><h1> Welcome! </h1></center>");
-        }
     }
 
     /**
-     * Formats the page for HTML
+     * Formats the page for HTML.
+     * 
      * @param text   : Title tag
      * @param option : 1 for opening tags, 2 for closing
      */
@@ -114,12 +120,12 @@ public class ParserServlet extends HttpServlet {
         }
     }
 
-    // Shortens system print statements
+    /* Shortens system print statements. */
     protected void print(String text) {
         System.out.println(text);
     }
 
-    // Shorten calls to contains() 
+    /* Shorten calls to contains(). */
     protected boolean lang_pref(String lang1, String lang2) {
         return lang1.toLowerCase().contains(lang2.toLowerCase());
     }
